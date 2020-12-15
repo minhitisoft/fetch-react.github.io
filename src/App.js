@@ -1,0 +1,81 @@
+import React, { useState, useEffect } from "react";
+import './App.css';
+import './asset/style/main.scss'
+import Header from './layout/Header/Header';
+import Sidebar from './component/Sidebar';
+import PostLager from './component/PostLager';
+import SetTime from './component/SetTime'
+import parser from 'rss-parser'
+import Search from './component/Search';
+
+
+const CORS_PROXY = "https://cors-anywhere.herokuapp.com/";
+const URL = "https://vnexpress.net/rss/suc-khoe.rss";
+
+const App = () => {
+  const [articles, setArticles] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [time, setTime] = useState([]);
+  const [key, setKey] = useState('');
+
+  useEffect(() => {
+    const fetchArticles = async () => {
+      setLoading(true);
+      await parser.parseURL(CORS_PROXY + URL, (err, feed) => {
+        if (err) throw err;
+        setArticles(feed);
+        setLoading(false);
+      });
+    };
+    fetchArticles();
+  }, []);
+
+  const handleTime = (time) => {
+    setTime(time);
+  };
+
+  const handleSearch = (e) => {
+    const convertKey = change_alias(e.key)
+    setKey(convertKey.toUpperCase())
+  }
+  function change_alias(alias) {
+    var str = alias;
+    str = str.replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g, "a");
+    str = str.replace(/è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ/g, "e");
+    str = str.replace(/ì|í|ị|ỉ|ĩ/g, "i");
+    str = str.replace(/ò|ó|ọ|ỏ|õ|ô|ồ|ố|ộ|ổ|ỗ|ơ|ờ|ớ|ợ|ở|ỡ/g, "o");
+    str = str.replace(/ù|ú|ụ|ủ|ũ|ư|ừ|ứ|ự|ử|ữ/g, "u");
+    str = str.replace(/ỳ|ý|ỵ|ỷ|ỹ/g, "y");
+    str = str.replace(/đ/g, "d");
+    str = str.replace(/À|Á|Ạ|Ả|Ã|Â|Ầ|Ấ|Ậ|Ẩ|Ẫ|Ă|Ằ|Ắ|Ặ|Ẳ|Ẵ/g, "A");
+    str = str.replace(/È|É|Ẹ|Ẻ|Ẽ|Ê|Ề|Ế|Ệ|Ể|Ễ/g, "E");
+    str = str.replace(/Ì|Í|Ị|Ỉ|Ĩ/g, "I");
+    str = str.replace(/Ò|Ó|Ọ|Ỏ|Õ|Ô|Ồ|Ố|Ộ|Ổ|Ỗ|Ơ|Ờ|Ớ|Ợ|Ở|Ỡ/g, "O");
+    str = str.replace(/Ù|Ú|Ụ|Ủ|Ũ|Ư|Ừ|Ứ|Ự|Ử|Ữ/g, "U");
+    str = str.replace(/Ỳ|Ý|Ỵ|Ỷ|Ỹ/g, "Y");
+    str = str.replace(/Đ/g, "D");
+    str = str.trim();
+    return str;
+  }
+
+
+  return (
+    <div className="page-wraper">
+      <div class="pre-header"></div>
+      <Header handleSearch={handleSearch}/>
+      <div className="page-main" id="content">
+        <div className="blog-page container clearfix">
+          <div className="row justify-content-between">
+            <div className="col-4"><Sidebar handleSearch={handleSearch} /></div>
+            <div className="col-7 main">
+              <SetTime loading={loading} handleTime={handleTime} />
+              <PostLager articles={articles} loading={loading} time={time} search={key} />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default App;
