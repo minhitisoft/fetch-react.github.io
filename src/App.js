@@ -19,6 +19,7 @@ const App = () => {
   const [key, setKey] = useState('');
 
   useEffect(() => {
+    
     const fetchArticles = async () => {
       setLoading(true);
       await parser.parseURL(CORS_PROXY + URL, (err, feed) => {
@@ -27,7 +28,10 @@ const App = () => {
         setLoading(false);
       });
     };
-    fetchArticles();
+    const interval = setInterval(() => {
+      fetchArticles();
+    }, 60000);
+    return () => clearInterval(interval);
   }, []);
 
   const handleTime = (time) => {
@@ -66,8 +70,8 @@ const App = () => {
       <div className="page-main" id="content">
         <div className="blog-page container clearfix">
           <div className="row justify-content-between">
-            <div className="col-4"><Sidebar handleSearch={handleSearch} /></div>
-            <div className="col-7 main">
+            <div className="col-lg-4 col-12 text-center"><Sidebar articles={articles} handleSearch={handleSearch} /></div>
+            <div className="col-lg-7 col-12 main">
               <SetTime loading={loading} handleTime={handleTime} />
               <PostLager articles={articles} loading={loading} time={time} search={key} />
             </div>

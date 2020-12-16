@@ -104,7 +104,7 @@ class Header extends Component {
                 </ul>
                 <div id="search-box">
                     <form method="get" id="searchform" onSubmit={this.searchSubmit.bind(this)}>
-                        <input type="text" defaultValue name="s" id="s" onChange={this.handleChange.bind(this)} />
+                        <input type="text" placeholder="Search..." name="s" id="s" onChange={this.handleChange.bind(this)} />
                         <input type="submit" id="searchsubmit" defaultValue="Search" />
                     </form>
                 </div>
